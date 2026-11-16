@@ -28,7 +28,7 @@ const tempQuat = new THREE.Quaternion();
 
 const CABIN_SKETCH_URL = '/fonts/CabinSketch-Regular.ttf';
 
-const PictureContent = ({ imagePath, imagePaintedPath, width, height, isPainted }) => {
+const PictureContent = ({ imagePath, imagePaintedPath, width, height, isPainted, position }) => {
     const texture = useTexture(imagePath);
     // Render nothing if no painted path, but we still call the hook unconditionally to respect hook rules
     const paintedTexture = useTexture(imagePaintedPath || imagePath);
@@ -55,15 +55,17 @@ const PictureContent = ({ imagePath, imagePaintedPath, width, height, isPainted 
         }
     }, [isPainted, imagePaintedPath]);
 
+    const isJpg = imagePath.toLowerCase().endsWith('.jpg') || imagePath.toLowerCase().endsWith('.jpeg');
+
     return (
-        <group position={[0, 0, 0.01]}> {/* Lekko przed ramką */}
+        <group position={position || [0, 0, 0.01]}> {/* Lekko przed ramką */}
             {imagePaintedPath && (
                 <mesh position={[0, 0, -0.001]}>
                     <planeGeometry args={[width, height]} />
                     <meshBasicMaterial color="#e0e0e0"
                         map={paintedTexture}
-                        transparent={true}
-                        alphaTest={0.5}
+                        transparent={!isJpg}
+                        alphaTest={isJpg ? 0 : 0.5}
                         side={THREE.DoubleSide}
                         roughness={0.9}
                     />
@@ -75,17 +77,17 @@ const PictureContent = ({ imagePath, imagePaintedPath, width, height, isPainted 
                     <revealMaterial color="#e0e0e0"
                         ref={materialRef}
                         map={texture}
-                        transparent={true}
-                        alphaTest={0.1}
+                        transparent={!isJpg}
+                        alphaTest={isJpg ? 0 : 0.1}
                         side={THREE.DoubleSide}
                         roughness={0.9}
                         uProgress={0.0}
                     />
                 ) : (
-                    <meshBasicMaterial color="#e0e0e0"
+                    <meshBasicMaterial color="#ffffff"
                         map={texture}
-                        transparent={true}
-                        alphaTest={0.1} // KLUCZOWE: Naprawia przezroczystość (wycina tło)
+                        transparent={!isJpg}
+                        alphaTest={isJpg ? 0 : 0.1} // KLUCZOWE: Naprawia przezroczystość (wycina tło)
                         side={THREE.DoubleSide}
                         roughness={0.5}
                     />
@@ -294,10 +296,11 @@ const InspectableFrame = ({ frame, wallX, frameTexture, framePaintedTexture, CAB
                     width={frame.imageWidth || frame.width * 0.7}
                     height={frame.imageHeight || frame.height * 0.7}
                     isPainted={isHovered || isInspected}
+                    position={[frame.imageX || 0, frame.imageY || 0, 0.01]}
                 />
             )}
 
-            {/* PODPIS */}
+            {/* PODPIS / CYTAT */}
             {frame.signature && (
                 <Text
                     position={[
@@ -308,8 +311,11 @@ const InspectableFrame = ({ frame, wallX, frameTexture, framePaintedTexture, CAB
                     fontSize={frame.signatureSize || 0.12}
                     font={CABIN_SKETCH_URL}
                     color={frame.signatureColor || "#333333"}
-                    anchorX="center"
-                    anchorY="middle"
+                    anchorX={frame.signatureAnchorX || "center"}
+                    anchorY={frame.signatureAnchorY || "middle"}
+                    textAlign={frame.signatureAlign || "center"}
+                    maxWidth={frame.signatureMaxWidth}
+                    lineHeight={1.3}
                 >
                     {frame.signature}
                 </Text>
@@ -376,14 +382,21 @@ const CorridorDecorations = ({ segmentLength, zOffset, corridorWidth = 4, corrid
             z: zOffset - 10,         // Między startem a Gallery (relZ -5 do -15)
             side: 'right',
             width: 2.5,              // Szerokość ramki
-            height: 2.5 / 1.785,     // Legacy ratio 3200x1792
+            height: 2.5 / 1.785,     // Legacy ratio 3200x1792 (~1.40)
             y: 0.3,                  // Wysokość na ścianie
             id: 'frame-1',
-            // Custom setup for "rysuneknaobraz1.png"
-            image: '/textures/corridor/rysuneknaobraz1.webp',
-            imageWidth: 1.1,
-            imageHeight: 1.1,
-            offsetFromWall: 0.1, // Przesunięcie bliżej środka korytarza (0.1 unit)
+            image: '/textures/dimpy-photo.jpg',
+            imageX: -0.42,
+            imageY: 0,
+            imageWidth: 0.72,
+            imageHeight: 0.82,
+            offsetFromWall: 0.1,
+            signature: "\"Dream big.\nCode boldly.\nCreate endlessly.\"",
+            signatureX: 0.42,
+            signatureY: 0,
+            signatureSize: 0.085,
+            signatureColor: '#222222',
+            signatureMaxWidth: 1.0,
         },
         {
             z: zOffset - 25,         // Między Gallery a Studio (relZ -20 do -30)
@@ -404,11 +417,12 @@ const CorridorDecorations = ({ segmentLength, zOffset, corridorWidth = 4, corrid
             height: 2.5 / 1.785,
             y: 0.25,
             id: 'frame-3',
-            signature: "Empty canvas!\nWant your art here?\nContact me!",
+            signature: "\"Creativity is intelligence\nhaving fun.\"\n— Albert Einstein",
             signatureX: 0,
             signatureY: 0,
-            signatureSize: 0.12,
-            signatureColor: '#333333'
+            signatureSize: 0.11,
+            signatureColor: '#222222',
+            signatureMaxWidth: 1.8,
         },
         {
             z: zOffset - 55,         // Między About a Connect (relZ -50 do -60)
@@ -417,11 +431,12 @@ const CorridorDecorations = ({ segmentLength, zOffset, corridorWidth = 4, corrid
             height: 2.5 / 1.785,
             y: 0.35,
             id: 'frame-4',
-            signature: "Empty canvas!\nWant your art here?\nContact me!",
+            signature: "\"Simplicity is the soul\nof efficiency.\"\n— Austin Freeman",
             signatureX: 0,
             signatureY: 0,
-            signatureSize: 0.12,
-            signatureColor: '#333333'
+            signatureSize: 0.11,
+            signatureColor: '#222222',
+            signatureMaxWidth: 1.8,
         },
     ], [zOffset]);
 
