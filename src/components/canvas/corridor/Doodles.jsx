@@ -87,19 +87,19 @@ const Doodles = () => {
             {/* Minor decorative elements - HIDDEN on LOW tier for performance */}
             {!isLowTier && (
                 <>
-                    {/* Animated hand-drawn stars */}
-                    <AnimatedStar position={[-1.5, 1.2, 0]} scale={0.1} speed={0.4} />
-                    <AnimatedStar position={[1.6, 0.8, -0.5]} scale={0.08} speed={0.5} />
-                    <AnimatedStar position={[-1.2, 0.1, 0.5]} scale={0.06} speed={0.3} />
-                    <AnimatedStar position={[1.3, 1.4, -1]} scale={0.07} speed={0.6} />
+                    {/* Animated hand-drawn stars with multiple colors */}
+                    <AnimatedStar position={[-1.5, 1.2, 0]} scale={0.1} speed={0.4} color="#FF9500" />
+                    <AnimatedStar position={[1.6, 0.8, -0.5]} scale={0.08} speed={0.5} color="#007AFF" />
+                    <AnimatedStar position={[-1.2, 0.1, 0.5]} scale={0.06} speed={0.3} color="#FF2D55" />
+                    <AnimatedStar position={[1.3, 1.4, -1]} scale={0.07} speed={0.6} color="#34C759" />
 
-                    {/* Hand-drawn circles */}
-                    <DoodleCircle position={[1.2, -0.2, 0.2]} scale={0.05} />
-                    <DoodleCircle position={[-1.3, 1.0, 0.3]} scale={0.04} />
+                    {/* Hand-drawn circles with multiple colors */}
+                    <DoodleCircle position={[1.2, -0.2, 0.2]} scale={0.05} color="#FFCC00" />
+                    <DoodleCircle position={[-1.3, 1.0, 0.3]} scale={0.04} color="#00C7BE" />
 
-                    {/* Squiggly decorative lines */}
-                    <Squiggle position={[-1.6, 0.5, -0.3]} rotation={0.2} />
-                    <Squiggle position={[1.4, 0.3, 0.2]} rotation={-0.3} />
+                    {/* Squiggly decorative lines with multiple colors */}
+                    <Squiggle position={[-1.6, 0.5, -0.3]} rotation={0.2} color="#AF52DE" />
+                    <Squiggle position={[1.4, 0.3, 0.2]} rotation={-0.3} color="#FF3B30" />
 
                     {/* Thought bubble near avatar */}
                     <ThoughtBubble position={[0.9, 0.7, 0.5]} />
@@ -184,7 +184,7 @@ const SketchElement = ({
 /**
  * Animated rotating star - hand-drawn style
  */
-const AnimatedStar = ({ position, scale = 0.1, speed = 0.5 }) => {
+const AnimatedStar = ({ position, scale = 0.1, speed = 0.5, color = "#FF9500" }) => {
     const ref = useRef();
 
     useFrame((state) => {
@@ -201,7 +201,7 @@ const AnimatedStar = ({ position, scale = 0.1, speed = 0.5 }) => {
             {[0, 1, 2, 3].map((i) => (
                 <mesh key={i} rotation={[0, 0, (i * Math.PI) / 4]}>
                     <planeGeometry args={[1, 0.12]} />
-                    <meshBasicMaterial color="#2a2a2a" transparent opacity={0.7} side={2} />
+                    <meshBasicMaterial color={color} transparent opacity={0.8} side={2} />
                 </mesh>
             ))}
         </group>
@@ -211,7 +211,7 @@ const AnimatedStar = ({ position, scale = 0.1, speed = 0.5 }) => {
 /**
  * Squiggly hand-drawn line
  */
-const Squiggle = ({ position, rotation = 0 }) => {
+const Squiggle = ({ position, rotation = 0, color = "#AF52DE" }) => {
     const ref = useRef();
 
     useFrame((state) => {
@@ -226,7 +226,7 @@ const Squiggle = ({ position, rotation = 0 }) => {
             {[0, 1, 2, 3, 4, 5].map((i) => (
                 <mesh key={i} position={[i * 0.07, Math.sin(i * 1.5) * 0.035, 0]}>
                     <circleGeometry args={[0.015, 8]} />
-                    <meshBasicMaterial color="#444" transparent opacity={0.5} />
+                    <meshBasicMaterial color={color} transparent opacity={0.65} />
                 </mesh>
             ))}
         </group>
@@ -236,7 +236,7 @@ const Squiggle = ({ position, rotation = 0 }) => {
 /**
  * Hand-drawn circle with pulsing animation
  */
-const DoodleCircle = ({ position, scale = 0.08 }) => {
+const DoodleCircle = ({ position, scale = 0.08, color = "#00C7BE" }) => {
     const ref = useRef();
 
     useFrame((state) => {
@@ -250,7 +250,7 @@ const DoodleCircle = ({ position, scale = 0.08 }) => {
     return (
         <mesh ref={ref} position={position}>
             <ringGeometry args={[0.6, 1, 12]} />
-            <meshBasicMaterial color="#333" transparent opacity={0.4} side={2} />
+            <meshBasicMaterial color={color} transparent opacity={0.55} side={2} />
         </mesh>
     );
 };

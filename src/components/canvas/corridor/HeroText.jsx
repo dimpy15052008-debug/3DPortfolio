@@ -54,25 +54,25 @@ const HeroText = ({ position = [0, 0.3, 0] }) => {
     // Pre-allocate Vector3 to avoid per-frame garbage collection
     const worldPosVec = useRef(new THREE.Vector3());
 
-    // Letter positions for DIMPY RAI split effect
+    // Letter positions for DIMPY RAI split effect with vibrant multiple colors
     const letters = useMemo(() => [
-        { char: 'D', baseX: -1.55, splitDir: -2.4, delay: 0 },
-        { char: 'I', baseX: -1.1, splitDir: -1.8, delay: 0 },
-        { char: 'M', baseX: -0.6, splitDir: -1.2, delay: 0 },
-        { char: 'P', baseX: -0.1, splitDir: -0.4, delay: 0 },
-        { char: 'Y', baseX: 0.4, splitDir: 0.4, delay: 0 },
-        { char: 'R', baseX: 1.05, splitDir: 1.2, delay: 0 },
-        { char: 'A', baseX: 1.55, splitDir: 1.8, delay: 0 },
-        { char: 'I', baseX: 2.0, splitDir: 2.4, delay: 0 },
+        { char: 'D', baseX: -1.55, splitDir: -2.4, delay: 0, color: '#FF3B30' }, // Vibrant Red
+        { char: 'I', baseX: -1.1, splitDir: -1.8, delay: 0, color: '#FF9500' },  // Bright Orange
+        { char: 'M', baseX: -0.6, splitDir: -1.2, delay: 0, color: '#FFCC00' },  // Golden Yellow
+        { char: 'P', baseX: -0.1, splitDir: -0.4, delay: 0, color: '#34C759' },  // Fresh Green
+        { char: 'Y', baseX: 0.4, splitDir: 0.4, delay: 0, color: '#00C7BE' },   // Bright Teal / Cyan
+        { char: 'R', baseX: 1.05, splitDir: 1.2, delay: 0, color: '#007AFF' },  // Electric Blue
+        { char: 'A', baseX: 1.55, splitDir: 1.8, delay: 0, color: '#5856D6' },  // Indigo Purple
+        { char: 'I', baseX: 2.0, splitDir: 2.4, delay: 0, color: '#FF2D55' },   // Hot Pink
     ], []);
 
-    // Tagline words for split effect
+    // Tagline words for split effect with complementary colorful palette
     const taglineWords = useMemo(() => [
-        { text: '<', baseX: -0.85, splitDir: -1.5, delay: 0 },
-        { text: 'student', baseX: -0.4, splitDir: -0.8, delay: 0 },
-        { text: '&', baseX: 0.05, splitDir: 0, delay: 0 },
-        { text: 'creator', baseX: 0.45, splitDir: 0.8, delay: 0 },
-        { text: '/>', baseX: 0.85, splitDir: 1.5, delay: 0 },
+        { text: '<', baseX: -0.85, splitDir: -1.5, delay: 0, color: '#FF3B30' },
+        { text: 'student', baseX: -0.4, splitDir: -0.8, delay: 0, color: '#007AFF' },
+        { text: '&', baseX: 0.05, splitDir: 0, delay: 0, color: '#FF9500' },
+        { text: 'creator', baseX: 0.45, splitDir: 0.8, delay: 0, color: '#34C759' },
+        { text: '/>', baseX: 0.85, splitDir: 1.5, delay: 0, color: '#AF52DE' },
     ], []);
 
     // Animation loop
@@ -136,7 +136,7 @@ const HeroText = ({ position = [0, 0.3, 0] }) => {
 
     return (
         <group ref={groupRef} position={position} scale={[scale, scale, 1]}>
-            {/* DIMPY RAI Letters - Rubik Scribble font with fade-in animation */}
+            {/* DIMPY RAI Letters - Rubik Scribble font with multiple vibrant colors */}
             {letters.map((letter, i) => (
                 <Text
                     key={`letter-${i}`}
@@ -144,9 +144,9 @@ const HeroText = ({ position = [0, 0.3, 0] }) => {
                     position={[letter.baseX, 0.2, 0]}
                     fontSize={0.7}
                     font={RUBIK_SCRIBBLE_URL}
-                    color="#ffffff"
-                    outlineWidth={0.012}
-                    outlineColor="#1a1a1a"
+                    color={letter.color}
+                    outlineWidth={0.015}
+                    outlineColor="#111111"
                     anchorX="center"
                     anchorY="middle"
                     letterSpacing={0}
@@ -155,7 +155,7 @@ const HeroText = ({ position = [0, 0.3, 0] }) => {
                 </Text>
             ))}
 
-            {/* Tagline words - Cabin Sketch font with fade-in animation */}
+            {/* Tagline words - Cabin Sketch font with matching colorful style */}
             {taglineWords.map((word, i) => (
                 <Text
                     key={word.text}
@@ -163,7 +163,9 @@ const HeroText = ({ position = [0, 0.3, 0] }) => {
                     position={[word.baseX, -0.55, 0.3]}
                     fontSize={0.16}
                     font={CABIN_SKETCH_URL}
-                    color="#555555"
+                    color={word.color}
+                    outlineWidth={0.004}
+                    outlineColor="#222222"
                     anchorX="center"
                     anchorY="middle"
                     letterSpacing={0.04}
@@ -172,11 +174,11 @@ const HeroText = ({ position = [0, 0.3, 0] }) => {
                 </Text>
             ))}
 
-            {/* Small decorative doodles around title */}
-            <SmallStar position={[-1.2, 0.55, 0]} scale={0.07} />
-            <SmallStar position={[1.25, 0.45, 0]} scale={0.05} />
-            <SmallStar position={[-1.0, -0.6, 0]} scale={0.04} />
-            <SmallStar position={[1.1, -0.55, 0]} scale={0.035} />
+            {/* Small colorful decorative stars around title */}
+            <SmallStar position={[-1.2, 0.55, 0]} scale={0.07} color="#FF3B30" />
+            <SmallStar position={[1.25, 0.45, 0]} scale={0.05} color="#007AFF" />
+            <SmallStar position={[-1.0, -0.6, 0]} scale={0.04} color="#34C759" />
+            <SmallStar position={[1.1, -0.55, 0]} scale={0.035} color="#FF9500" />
         </group>
     );
 };
@@ -188,13 +190,13 @@ const easeOutQuad = (t) => t * (2 - t);
  * Small decorative star - STATIC to avoid useFrame overhead
  * Parent HeroText already handles all animations
  */
-const SmallStar = ({ position, scale = 0.1 }) => {
+const SmallStar = ({ position, scale = 0.1, color = "#FFCC00" }) => {
     return (
         <group position={position} scale={scale}>
             {[0, 1, 2, 3].map((i) => (
                 <mesh key={i} rotation={[0, 0, (i * Math.PI) / 4]}>
                     <planeGeometry args={[1, 0.12]} />
-                    <meshBasicMaterial color="#333" transparent opacity={0.6} side={2} />
+                    <meshBasicMaterial color={color} transparent opacity={0.85} side={2} />
                 </mesh>
             ))}
         </group>
